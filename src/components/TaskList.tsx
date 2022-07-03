@@ -14,16 +14,50 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
+  function geradorId(){
+    let idGerado = Math.floor(Math.random() * 65536) - 32768;
+
+    let isExistId = tasks.some(task => task.id === idGerado)
+
+    if(isExistId){
+      geradorId()
+    }
+
+    return idGerado
+  }
+
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(newTaskTitle.trim() === ''){
+      alert('Informe o título')
+      return 
+    }
+
+    const id = geradorId()
+    setTasks([...tasks, {id: id, title: newTaskTitle, isComplete: false}])
+    setNewTaskTitle('')
+
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const auxArrayTasks = [...tasks]
+    let indexItem 
+    let taskParaAtualizar = auxArrayTasks.find(task => task.id === id)
+    if(taskParaAtualizar){
+      taskParaAtualizar.isComplete = !taskParaAtualizar.isComplete
+      indexItem = auxArrayTasks.indexOf(taskParaAtualizar)
+      auxArrayTasks[indexItem] = taskParaAtualizar
+    }
+
+    setTasks([...auxArrayTasks])
+   
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    let newArrayTaksSemItem = tasks.filter(task => task.id !== id)
+    setTasks([...newArrayTaksSemItem])
   }
 
   return (
